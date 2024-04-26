@@ -1,12 +1,26 @@
 package com.example.messasingchat.Entity;
 
-import java.util.Date;
-
 public class FriendsMessageListEntity {
+    private int id,idTheTalker;
     private String userName,lastMessageSend;
-    private Date timeSend;
+    private String timeSend;
     private String userImage;
 
+    public int getIdTheTalker() {
+        return idTheTalker;
+    }
+
+    public void setIdTheTalker(int idTheTalker) {
+        this.idTheTalker = idTheTalker;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getUserName() {
         return userName;
@@ -24,11 +38,11 @@ public class FriendsMessageListEntity {
         this.lastMessageSend = lastMessageSend;
     }
 
-    public Date getTimeSend() {
+    public String  getTimeSend() {
         return timeSend;
     }
 
-    public void setTimeSend(Date timeSend) {
+    public void setTimeSend(String timeSend) {
         this.timeSend = timeSend;
     }
 

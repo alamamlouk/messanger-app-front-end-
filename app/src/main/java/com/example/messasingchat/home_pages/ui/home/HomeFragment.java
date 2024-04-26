@@ -1,5 +1,6 @@
 package com.example.messasingchat.home_pages.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,16 +13,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.messasingchat.Adapaters.FriendsMessagesAdapter;
 import com.example.messasingchat.Entity.FriendsMessageListEntity;
-import com.example.messasingchat.Services.UserServices.UserServices;
+import com.example.messasingchat.Entity.OnItemListMessageClick;
+import com.example.messasingchat.Services.ChatRoomServices;
+import com.example.messasingchat.Services.UserServices.ChatListResponseListener;
+import com.example.messasingchat.chatroom.ChatRoomActivity;
 import com.example.messasingchat.databinding.FragmentHomeBinding;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private FriendsMessagesAdapter friendsMessagesAdapter;
+    private ChatRoomServices chatRoomServices;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -31,20 +35,29 @@ public class HomeFragment extends Fragment {
 
         final RecyclerView recyclerView = binding.recyclerView;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        FriendsMessageListEntity friendsMessageListEntity =new FriendsMessageListEntity();
-        friendsMessageListEntity.setLastMessageSend("hii");
-        friendsMessageListEntity.setUserName("ali");
-        FriendsMessageListEntity friendsMessageListEntity1 =new FriendsMessageListEntity();
-        friendsMessageListEntity1.setLastMessageSend("hiiiii");
-        friendsMessageListEntity1.setUserName("ala");
-        List<FriendsMessageListEntity>friendListEntities=new ArrayList<>();
-        friendListEntities.add(friendsMessageListEntity);
-        friendListEntities.add(friendsMessageListEntity1);
-        friendsMessagesAdapter = new FriendsMessagesAdapter(friendListEntities,getContext());
-        recyclerView.setAdapter(friendsMessagesAdapter);
-        UserServices userServices=new UserServices(getContext());
+
+        chatRoomServices=new ChatRoomServices(getContext());
         try {
-            userServices.getUserRequest();
+            this.chatRoomServices.getUsersListMessages(new ChatListResponseListener() {
+                @Override
+                public void onSuccess(List<FriendsMessageListEntity> messageListEntities) {
+                    friendsMessagesAdapter = new FriendsMessagesAdapter(messageListEntities, getContext(), new OnItemListMessageClick() {
+                        @Override
+                        public void onItemClick(int id,int chatRoomId) {
+                            Intent intent = new Intent(getContext(), ChatRoomActivity.class);
+                            intent.putExtra("theReceiverId",id);
+                            intent.putExtra("RoomId",chatRoomId);
+                            startActivity(intent);
+                        }
+                    });
+                    recyclerView.setAdapter(friendsMessagesAdapter);
+                }
+
+                @Override
+                public void onFailure(String message) {
+
+                }
+            });
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

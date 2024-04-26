@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -13,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.messasingchat.Adapaters.FriendsListAdapter;
 import com.example.messasingchat.Entity.FriendListEntity;
+import com.example.messasingchat.Entity.User;
 import com.example.messasingchat.Services.FollowServices.FollowServices;
 import com.example.messasingchat.databinding.FragmentFriendsListBinding;
 
@@ -24,6 +24,8 @@ public class FriendsList extends Fragment {
     private FragmentFriendsListBinding binding;
 
     private FollowServices followServices;
+    private List<FriendListEntity> friendListEntities;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -32,16 +34,30 @@ public class FriendsList extends Fragment {
         final RecyclerView recyclerView=binding.friendsListRc;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         followServices=new FollowServices(getContext());
-//        followServices.getAllFollowedFriends();
-        FriendListEntity friendListEntity=new FriendListEntity();
-        friendListEntity.setFriendName("ala");
-        FriendListEntity friendListEntity1=new FriendListEntity();
-        friendListEntity1.setFriendName("ala");
-        List<FriendListEntity> friendListEntities=new ArrayList<>();
-        friendListEntities.add(friendListEntity);
-        friendListEntities.add(friendListEntity1);
-        FriendsListAdapter friendsListAdapter = new FriendsListAdapter(friendListEntities, getContext());
-        recyclerView.setAdapter(friendsListAdapter);
+        try {
+            followServices.getFriends(new ListFriendResponse() {
+                @Override
+                public void onSuccess(List<User> userList) {
+                    friendListEntities=new ArrayList<>();
+                        for(User user:userList){
+                            FriendListEntity f=new FriendListEntity();
+                            f.setFriendName(user.getFullName());
+                            friendListEntities.add(f);
+                        }
+                    FriendsListAdapter friendsListAdapter = new FriendsListAdapter(friendListEntities, getContext());
+                    recyclerView.setAdapter(friendsListAdapter);
+                }
+
+                @Override
+                public void onError(String message) {
+
+                }
+            });
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
         return root;
     }
 

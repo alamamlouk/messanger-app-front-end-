@@ -79,4 +79,6 @@
     <string name="alaamamlouk09_gmail_com">alaamamlouk09@gmail.com</string>
     <string name="log_out">log out</string>
     <string name="full_name">Full name</string>
+    <string name="send_friend_request">Send Friend Request</string>
+    <string name="type_a_message">Type a message</string>
 </resources>

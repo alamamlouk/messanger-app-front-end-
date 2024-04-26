@@ -1,27 +1,28 @@
 package com.example.messasingchat.Adapaters;
 
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.messasingchat.placeholder.PlaceholderContent.PlaceholderItem;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.messasingchat.Entity.RequestFriendShip;
+import com.example.messasingchat.Services.FollowServices.FollowServices;
 import com.example.messasingchat.databinding.FragmentRequestBinding;
 
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link PlaceholderItem}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class MyrequestsRecyclerViewAdapter extends RecyclerView.Adapter<MyrequestsRecyclerViewAdapter.ViewHolder> {
 
-    private final List<PlaceholderItem> mValues;
+    private final List<RequestFriendShip> mValues;
+    private FollowServices followServices;
 
-    public MyrequestsRecyclerViewAdapter(List<PlaceholderItem> items) {
+    public MyrequestsRecyclerViewAdapter(List<RequestFriendShip> items, Context context) {
         mValues = items;
+        followServices=new FollowServices(context);
     }
 
     @Override
@@ -34,25 +35,63 @@ public class MyrequestsRecyclerViewAdapter extends RecyclerView.Adapter<Myreques
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mUserName.setText(mValues.get(position).getUserFullName());
+        holder.mUserPhoto.setText(mValues.get(position).getPicture());
+        holder.acceptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    followServices.acceptFollowRequest(holder.mItem.getRequestFriendShipId());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                int itemPosition = holder.getAbsoluteAdapterPosition();
+                if (itemPosition != RecyclerView.NO_POSITION) {
+                    removeItem(itemPosition);
+                }
+            }
+        });
+        holder.rejectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    int itemPosition = holder.getAbsoluteAdapterPosition();
+                    if (itemPosition != RecyclerView.NO_POSITION) {
+                        removeItem(itemPosition);
+                        followServices.rejectFollowRequest(holder.mItem.getRequestFriendShipId());
+
+                    }
+
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                int itemPosition = holder.getAbsoluteAdapterPosition();
+                if (itemPosition != RecyclerView.NO_POSITION) {
+                    removeItem(itemPosition);
+                }
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return mValues.size();
     }
+    public void removeItem(int position) {
+        mValues.remove(position);
+        notifyItemRemoved(position);
+    }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final TextView mIdView;
-        public final TextView mContentView;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public final TextView mUserName;
+        public final TextView mUserPhoto;
         public final Button acceptButton,rejectButton;
-        public PlaceholderItem mItem;
+        public RequestFriendShip mItem;
 
         public ViewHolder(FragmentRequestBinding binding) {
             super(binding.getRoot());
-            mIdView = binding.itemNumber;
-            mContentView = binding.content;
+            mUserName = binding.userName;
+            mUserPhoto = binding.userPhoto;
             acceptButton=binding.acceptRequest;
             rejectButton=binding.rejectRequest;
 
@@ -60,7 +99,7 @@ public class MyrequestsRecyclerViewAdapter extends RecyclerView.Adapter<Myreques
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mUserPhoto.getText() + "'";
         }
     }
 }

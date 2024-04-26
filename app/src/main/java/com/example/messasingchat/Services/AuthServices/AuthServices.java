@@ -15,6 +15,7 @@ import com.example.messasingchat.DTO.LoginDTO;
 import com.example.messasingchat.DTO.SignUpDTO;
 import com.example.messasingchat.Shared.ErrorHandler;
 import com.example.messasingchat.Shared.KeyStoreManager;
+import com.example.messasingchat.Shared.SharedPreferenceManager;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -26,6 +27,7 @@ public class AuthServices {
     public AuthServices(Context context) {
         this.context = context;
     }
+
 
     public void loginRequest(String email, String password, final AuthCallback callback) {
         String postUrl = getUrl + "/login";
@@ -46,6 +48,7 @@ public class AuthServices {
                             String token = response.getString("token");
                             try {
                                 KeyStoreManager.storeToken(context, token);
+                                SharedPreferenceManager.getInstance(context).saveId(response.getString("userId"));
                                 callback.onSuccess();
                             } catch (Exception e) {
                                 e.printStackTrace();

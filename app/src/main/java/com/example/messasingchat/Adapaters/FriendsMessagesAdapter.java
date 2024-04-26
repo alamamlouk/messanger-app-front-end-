@@ -6,18 +6,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.messasingchat.Entity.FriendsMessageListEntity;
+import com.example.messasingchat.Entity.OnItemListMessageClick;
 import com.example.messasingchat.R;
+
 import java.util.List;
 public class FriendsMessagesAdapter extends RecyclerView.Adapter<FriendsMessagesAdapter.FriendsMessageViewHolder> {
     private List<FriendsMessageListEntity> friendsMessageListEntities;
     private Context context;
+    private OnItemListMessageClick onItemListMessageClick;
 
-    public FriendsMessagesAdapter(List<FriendsMessageListEntity> friendsMessageListEntities, Context context) {
+    public FriendsMessagesAdapter(List<FriendsMessageListEntity> friendsMessageListEntities, Context context,OnItemListMessageClick listener) {
         this.friendsMessageListEntities = friendsMessageListEntities;
         this.context = context;
+        this.onItemListMessageClick=listener;
     }
 
     @NonNull
@@ -32,7 +38,12 @@ public class FriendsMessagesAdapter extends RecyclerView.Adapter<FriendsMessages
         FriendsMessageListEntity friendsMessageListEntity =this.friendsMessageListEntities.get(position);
         holder.friendName.setText(friendsMessageListEntity.getUserName());
         holder.friendLastMessage.setText(friendsMessageListEntity.getLastMessageSend());
-
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onItemListMessageClick.onItemClick(friendsMessageListEntity.getIdTheTalker(),friendsMessageListEntity.getId());
+            }
+        });
     }
 
     @Override
@@ -42,6 +53,7 @@ public class FriendsMessagesAdapter extends RecyclerView.Adapter<FriendsMessages
     public static class FriendsMessageViewHolder extends RecyclerView.ViewHolder {
         TextView friendName,friendLastMessage,lastMessageTimeSend;
         ImageView friendImage;
+
 
         public FriendsMessageViewHolder(@NonNull View itemView) {
             super(itemView);

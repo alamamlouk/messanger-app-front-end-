@@ -2,31 +2,35 @@ package com.example.messasingchat.home_pages.ui.requests;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.example.messasingchat.Adapaters.MyrequestsRecyclerViewAdapter;
+import com.example.messasingchat.Entity.RequestFriendShip;
 import com.example.messasingchat.R;
-import com.example.messasingchat.placeholder.PlaceholderContent;
+import com.example.messasingchat.Services.FollowServices.FollowServices;
+import com.example.messasingchat.home_pages.ui.friend_list.FriendsResponseListener;
 
-/**
- * A fragment representing a list of Items.
- */
+import java.util.List;
+
+
 public class RequestFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
+    private FollowServices followServices;
+
     private int mColumnCount = 1;
 
-
+    private List<RequestFriendShip>userList;
     public RequestFragment() {
     }
 
@@ -47,6 +51,8 @@ public class RequestFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+        this.followServices=new FollowServices(getContext());
+
     }
 
     @Override
@@ -54,7 +60,6 @@ public class RequestFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_request_list, container, false);
 
-        // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
@@ -63,7 +68,23 @@ public class RequestFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyrequestsRecyclerViewAdapter(PlaceholderContent.ITEMS));
+            try {
+                this.followServices.getPendingRequests(new FriendsResponseListener() {
+                    @Override
+                    public void onSuccess(List<RequestFriendShip> users) {
+                        userList=users;
+                        recyclerView.setAdapter(new MyrequestsRecyclerViewAdapter(userList,context));
+
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        Log.d("TAG", "onError: "+message);
+                    }
+                });
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
         return view;
     }

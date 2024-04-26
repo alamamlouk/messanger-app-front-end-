@@ -58,6 +58,8 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.legacy.support.v4)
     implementation(libs.recyclerview)
+    implementation(libs.socket.io.client)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

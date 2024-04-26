@@ -20,7 +20,7 @@
         android:id="@+id/nav_slideshow"
         android:name="com.example.messasingchat.home_pages.ui.search.SearchFragment"
         android:label="Search"
-        tools:layout="@layout/fragment_gallery" />
+        tools:layout="@layout/fragment_search_users" />
     <fragment
         android:id="@+id/requests"
         android:name="com.example.messasingchat.home_pages.ui.requests.RequestFragment"
