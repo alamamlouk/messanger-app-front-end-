@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal">
 
     <TextView
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         android:id="@+id/user_photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,15 +19,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
+        android:text="user"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/user_photo"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:textAppearance="?attr/textAppearanceListItem" />
     <Button
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/rejectRequest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/acceptRequest"
+        android:layout_marginEnd="10dp"
         android:text="Accept"/>
     <Button
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/rejectRequest"
-        android:text="Reject"/>
-</LinearLayout>
+        android:text="Reject"
+        android:layout_gravity="end"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -49,9 +49,10 @@ public class AuthServices {
                             try {
                                 KeyStoreManager.storeToken(context, token);
                                 SharedPreferenceManager.getInstance(context).saveId(response.getString("userId"));
+                                SharedPreferenceManager.getInstance(context).saveEmail(email);
+
                                 callback.onSuccess();
                             } catch (Exception e) {
-                                e.printStackTrace();
                                 callback.onFailure("Error storing token");
                             }
                         } catch (JSONException e) {
@@ -62,8 +63,8 @@ public class AuthServices {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        ErrorHandler.getError(error);
 
+                            callback.onFailure(ErrorHandler.getError(error));
                     }
                 });
 

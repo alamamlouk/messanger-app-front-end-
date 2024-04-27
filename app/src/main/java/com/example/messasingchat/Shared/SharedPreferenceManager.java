@@ -7,7 +7,10 @@ public class SharedPreferenceManager {
     private static final String SHARED_PREF_NAME = "login_share_pref";
     private static final String KEY_TOKEN = "token";
     private static final String USER_ID = "userId";
+    private static final String USER_NAME="userName";
+    private static final String USER_EMAIL="userEmail";
     private static SharedPreferenceManager mInstance;
+    private static final String REMEMBER="remember";
     private final SharedPreferences mSharedPreferences;
     private SharedPreferenceManager(Context context) {
         mSharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
@@ -33,6 +36,11 @@ public class SharedPreferenceManager {
         editor.remove(KEY_TOKEN);
         editor.apply();
     }
+    public void clearLogin() {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.remove(REMEMBER);
+        editor.apply();
+    }
     public void saveId(String userId){
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putString(USER_ID, userId);
@@ -45,6 +53,30 @@ public class SharedPreferenceManager {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.remove(USER_ID);
         editor.apply();
+    }
+    public void saveEmail(String email){
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(USER_EMAIL, email);
+        editor.apply();
+    }    public void saveUserName(String name){
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(USER_NAME, name);
+        editor.apply();
+    }
+    public String getUserName() {
+        return mSharedPreferences.getString(USER_NAME, null);
+    }
+
+    public String getUserEmail() {
+        return mSharedPreferences.getString(USER_NAME, null);
+    }
+    public void saveLogin(boolean remeberMe){
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putBoolean(REMEMBER, remeberMe);
+        editor.apply();
+    }
+    public boolean getLoginRememver() {
+        return mSharedPreferences.getBoolean(REMEMBER, false);
     }
 
 }

@@ -4,19 +4,35 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="4dp">
+    <androidx.cardview.widget.CardView
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="50dp"
+        app:cardElevation="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/UserImageLayout">
+        <ImageView
+            android:scaleType="centerCrop"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/profile"
+            android:id="@+id/userImage"
+            android:contentDescription="me"/>
+    </androidx.cardview.widget.CardView>
     <TextView
         android:id="@+id/textMessage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
         android:background="@drawable/background_receieve_message"
         android:padding="12dp"
         android:textColor="@color/white"
         android:textSize="13sp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintWidth_percent="0.75"/>
+        app:layout_constraintStart_toEndOf="@id/UserImageLayout"
+        />
     <TextView
         android:id="@+id/dateTime"
         android:layout_width="0dp"

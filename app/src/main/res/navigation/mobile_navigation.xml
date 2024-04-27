@@ -11,13 +11,13 @@
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
     <fragment
-        android:id="@+id/nav_gallery"
+        android:id="@+id/nav_friends"
         android:name="com.example.messasingchat.home_pages.ui.friend_list.FriendsList"
         android:label="FriendList"
         tools:layout="@layout/fragment_friends_list"
          />
     <fragment
-        android:id="@+id/nav_slideshow"
+        android:id="@+id/nav_search"
         android:name="com.example.messasingchat.home_pages.ui.search.SearchFragment"
         android:label="Search"
         tools:layout="@layout/fragment_search_users" />

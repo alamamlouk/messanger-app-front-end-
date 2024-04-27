@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal">
 
     <TextView
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         android:id="@+id/search_user_photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -12,15 +16,19 @@
         android:textAppearance="?attr/textAppearanceListItem" />
 
     <TextView
+        app:layout_constraintStart_toEndOf="@id/search_user_photo"
+        app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/search_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
         android:textAppearance="?attr/textAppearanceListItem" />
     <Button
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btn_send_friend_request"
         android:text="@string/send_friend_request"/>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

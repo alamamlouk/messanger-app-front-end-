@@ -2,9 +2,12 @@ package com.example.messasingchat.Authentication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,9 +17,11 @@ import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
 import com.example.messasingchat.R;
 import com.example.messasingchat.Services.AuthServices.AuthServices;
 import com.example.messasingchat.Shared.EmailValidator;
+import com.example.messasingchat.Shared.SharedPreferenceManager;
 import com.example.messasingchat.home_pages.HomePagesActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -28,6 +33,7 @@ public class AuthActivity extends AppCompatActivity{
 
     private CardView loginCard;
     private CardView signInCard;
+    private CheckBox checkBox;
 
 
     @Override
@@ -35,6 +41,11 @@ public class AuthActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_auth);
+        if(SharedPreferenceManager.getInstance(getApplicationContext()).getLoginRememver()){
+            Intent intent = new Intent(AuthActivity.this, HomePagesActivity.class);
+            startActivity(intent);
+            finish();
+        }
         loginEmail =findViewById(R.id.email_text_field);
         loginEmail.addTextChangedListener(new EmailValidator(loginEmail));
         loginPassword =findViewById(R.id.password_text_field);
@@ -44,6 +55,7 @@ public class AuthActivity extends AppCompatActivity{
         signInPassword=findViewById(R.id.signUp_password_text_field);
         signInEmail.addTextChangedListener(new EmailValidator(signInEmail));
         signInName=findViewById(R.id.signUp_Name_text_field);
+        checkBox=findViewById(R.id.remeberMe);
         this.authServices =new AuthServices(AuthActivity.this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -67,8 +79,13 @@ public class AuthActivity extends AppCompatActivity{
                     authServices.loginRequest(emailField, passwordField, new AuthCallback() {
                         @Override
                         public void onSuccess() {
+                            Log.d("TAG", "onSuccess: "+checkBox.toString());
+                            if(checkBox.isChecked()){
+                                SharedPreferenceManager.getInstance(getApplicationContext()).saveLogin(true);
+                            }
                             Intent intent = new Intent(AuthActivity.this, HomePagesActivity.class);
                             startActivity(intent);
+                            finish();
                         }
 
                         @Override
@@ -92,6 +109,10 @@ public class AuthActivity extends AppCompatActivity{
                 String nameField = String.valueOf(signInName.getText());
                 if(emailField.matches("") || passwordField.matches("") || nameField.matches("") ) {
                     Toast.makeText(getApplicationContext(),"Field must not be empty",Toast.LENGTH_SHORT).show();
+                }
+                if(!Patterns.EMAIL_ADDRESS.matcher(emailField).matches()){
+                    Toast.makeText(getApplicationContext(),"invalid email",Toast.LENGTH_SHORT).show();
+
                 }
                 else {
                     authServices.SignUpRequest(emailField, passwordField, nameField, new AuthCallback() {

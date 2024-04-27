@@ -12,8 +12,14 @@ import com.example.messasingchat.Entity.SendMessageListener;
 import com.example.messasingchat.Services.ChatRoomServices;
 import com.example.messasingchat.Shared.SharedPreferenceManager;
 import com.example.messasingchat.databinding.ActivityChatRoomBinding;
+import com.google.gson.Gson;
 
+import java.net.URISyntaxException;
 import java.util.List;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 public class ChatRoomActivity extends AppCompatActivity {
     private ActivityChatRoomBinding binding;
@@ -23,6 +29,8 @@ public class ChatRoomActivity extends AppCompatActivity {
     private ChatAdapter chatAdapter;
 
     private List<ChatMessage> chatMessagesList;
+    private Socket socket;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +39,18 @@ public class ChatRoomActivity extends AppCompatActivity {
         chatRoomServices=new ChatRoomServices(getApplicationContext());
         Intent intent=getIntent();
         theReceiverId=intent.getIntExtra("theReceiverId",0);
+        try {
+            socket = IO.socket("http://192.168.100.16:3000");
+            socket.connect();
+
+
+
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
         chatRoomId=intent.getIntExtra("RoomId",0);
+
         try {
             chatRoomServices.getChatRoomMessages(new MessageListener() {
                 @Override
@@ -52,11 +71,13 @@ public class ChatRoomActivity extends AppCompatActivity {
                     chatRoomServices.sendMessage(chatRoomId, theReceiverId, content, new SendMessageListener() {
                         @Override
                         public void onSuccess(ChatMessage chatMessage) {
-                            chatMessagesList.add(chatMessage);
-                            chatAdapter.notifyDataSetChanged();
                             binding.chatRecycleView.scrollToPosition(chatMessagesList.size() - 1);
                             binding.message.setText("");
                             binding.message.clearFocus();
+                            Gson gson = new Gson();
+                            String jsonData = gson.toJson(chatMessage);
+                            socket.emit("message", jsonData);
+
 
                         }
                     });
@@ -65,7 +86,38 @@ public class ChatRoomActivity extends AppCompatActivity {
                 }
             }
         });
+        socket.on("message", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                if (args.length > 0) {
+                    String jsonData = args[0].toString();
+                    handleReceivedData(jsonData);
+                }
+            }
+        });
 
+    }
 
+    private void handleReceivedData(String jsonData) {
+        Gson gson = new Gson();
+        ChatMessage dataObject = gson.fromJson(jsonData, ChatMessage.class);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!chatMessagesList.contains(dataObject)) {
+                    chatMessagesList.add(dataObject);
+                    chatAdapter.notifyDataSetChanged();
+                }
+
+                binding.chatRecycleView.scrollToPosition(chatMessagesList.size() - 1);
+            }
+        });
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        socket.disconnect();
     }
 }

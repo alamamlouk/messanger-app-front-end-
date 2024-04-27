@@ -10,6 +10,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.messasingchat.BuildConfig;
@@ -63,20 +64,26 @@ public class UserServices {
     }
     public void getUserProfile() throws Exception {
         String token=KeyStoreManager.retrieveToken(context);
-        String getUrl=url+"/me";
-        StringRequest getRequest = new StringRequest(Request.Method.GET, getUrl,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle error
-                    }
+        String getUrl=url+"/me/profile";
+        JsonObjectRequest getRequest=new JsonObjectRequest(Request.Method.GET, getUrl, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject jsonObject) {
+                Log.d("fullname", "onResponse: "+jsonObject);
+
+                try {
+                    SharedPreferenceManager.getInstance(context).saveUserName(jsonObject.getString("fullName"));
+
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
                 }
-        ) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+
+            }
+        }){
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();

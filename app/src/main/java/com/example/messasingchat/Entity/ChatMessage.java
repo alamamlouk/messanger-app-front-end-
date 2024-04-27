@@ -5,15 +5,6 @@ public class ChatMessage {
     private String  sendTime;
     private int senderId,ReceiverId;
 
-    @Override
-    public String toString() {
-        return "ChatMessage{" +
-                "textMessage='" + textMessage + '\'' +
-                ", sendTime='" + sendTime + '\'' +
-                ", senderId=" + senderId +
-                ", ReceiverId=" + ReceiverId +
-                '}';
-    }
 
     public String getTextMessage() {
         return textMessage;
